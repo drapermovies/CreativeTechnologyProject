@@ -325,8 +325,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 4607913086377867780, guid: 4b41ec59045570e43b55677c079352e2, type: 3}
-  count_x: 10
-  count_y: 10
+  count_x: 275
+  count_y: 275
 --- !u!114 &669331643
 MonoBehaviour:
   m_ObjectHideFlags: 0

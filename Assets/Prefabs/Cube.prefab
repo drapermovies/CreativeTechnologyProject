@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8351324790538921156}
   - component: {fileID: 5305507440643974300}
   - component: {fileID: -6693447204360677961}
-  - component: {fileID: -5592945897523681914}
+  - component: {fileID: -2576805889320857915}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   degrees_per_second: 360
---- !u!65 &-5592945897523681914
+--- !u!65 &-2576805889320857915
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
