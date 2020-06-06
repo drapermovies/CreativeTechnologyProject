@@ -303,8 +303,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 669331644}
-  - component: {fileID: 669331643}
   - component: {fileID: 669331642}
+  - component: {fileID: 669331643}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: Untagged
@@ -321,12 +321,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 669331641}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fc11f61502a78c409f7d7ee36d34349, type: 3}
+  m_Script: {fileID: 11500000, guid: d53b4b2b41712f944bd4c7e7d29693d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 4607913086377867780, guid: 4b41ec59045570e43b55677c079352e2, type: 3}
-  count_x: 275
-  count_y: 275
+  amount: 25
+  prefab: {fileID: 8761931436919044540, guid: 517bb1d5b44f0a7468030d3365d84b0b, type: 3}
 --- !u!114 &669331643
 MonoBehaviour:
   m_ObjectHideFlags: 0
