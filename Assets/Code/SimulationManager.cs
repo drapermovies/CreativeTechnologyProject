@@ -5,7 +5,6 @@ using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Burst;
-using Unity.Mathematics;
 
 namespace TrafficSimulation
 {
@@ -13,6 +12,7 @@ namespace TrafficSimulation
     public class SimulationManager : JobComponentSystem
     {
         BeginInitializationEntityCommandBufferSystem entityCommandBuffer;
+
         protected override void OnCreate()
         {
             entityCommandBuffer = World.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
@@ -28,10 +28,12 @@ namespace TrafficSimulation
                                 ref VEntityConversion vehicle,
                                 [ReadOnly] ref LocalToWorld localToWorld)
             {
+        
                 int spawnAmount = (int)vehicle.amount;
-                NativeArray<Entity> entities = new NativeArray<Entity>(spawnAmount, Allocator.Temp);
+                NativeArray<Entity> entities = new NativeArray<Entity>(spawnAmount, 
+                                                                       Allocator.Temp);
 
-                Unity.Mathematics.Random random = new Unity.Mathematics.Random(100);
+                Unity.Mathematics.Random random = new Unity.Mathematics.Random(1);
                 for (int i = 0; i < spawnAmount; i++)
                 {
                     Entity instance = entities[i] = commandBuffer.Instantiate(index, vehicle.prefab);
@@ -41,7 +43,31 @@ namespace TrafficSimulation
 
                     float3 position = math.transform(localToWorld.Value, newPos);
 
+                    Quaternion rotation = new Quaternion();
+                    rotation.eulerAngles = new Vector3(random.NextFloat(0f, 360f),
+                                                        0f, 0f);
+
+                    //Physical Space Location
                     commandBuffer.SetComponent(index, instance, new Translation { Value = position });
+                    
+                    //Render Location
+                    commandBuffer.SetComponent(index, instance, new LocalToWorld()
+                    {
+                        Value = Matrix4x4.TRS(position,
+                                            rotation,
+                                            Vector3.one)
+                    });
+
+                    float3 newEndGoal = random.NextFloat3(new float3(-100), new float3(100));
+                    newEndGoal.y = 0.0f;
+
+
+                    commandBuffer.SetComponent(index, instance, new TrafficSimulation.MovementData()
+                    {
+                        currentSpeed = 0.0f,
+                        maxSpeed = 20,
+                        endGoal = newEndGoal
+                    });
                 }
                 commandBuffer.DestroyEntity(index, entity);
             }

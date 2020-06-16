@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
+using Unity.Collections;
 
 namespace TrafficSimulation
 {
@@ -24,7 +25,9 @@ namespace TrafficSimulation
             referencedPrefabs.Add(prefab);
         }
 
-        public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+        public void Convert(Entity entity, 
+                            EntityManager dstManager, 
+                            GameObjectConversionSystem conversionSystem)
         {
             VEntityConversion spawnerData = new VEntityConversion
             {
