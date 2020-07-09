@@ -53,7 +53,7 @@ namespace TrafficSimulation
             {
                 commandBuffer = entityCommandBuffer.CreateCommandBuffer().ToConcurrent(),
                 deltaTime = Time.deltaTime
-        };
+            };
 
             JobHandle movementHandle = movementJob.Schedule(this, inputDeps);
 
