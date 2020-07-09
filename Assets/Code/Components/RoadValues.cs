@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Unity.Entities;
 
 public class RoadValues : MonoBehaviour
 {
@@ -15,5 +14,21 @@ public class RoadValues : MonoBehaviour
         {
             lanes = 1;
         }
+    }
+}
+
+namespace TrafficSimulation
+{
+    public struct RoadBufferElement : IBufferElementData
+    {
+        public int ID;
+        public int speedLimit;
+        public int lanes;
+        public bool isOneWay;
+        public int trafficAmount;
+
+        public RoadNode roadNode;
+
+        public bool isActive;
     }
 }

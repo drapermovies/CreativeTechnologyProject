@@ -66,6 +66,7 @@ namespace TrafficSimulation
                     {
                         currentSpeed = 0.0f,
                         maxSpeed = 20,
+                        startPos = position,
                         endGoal = newEndGoal
                     });
                 }

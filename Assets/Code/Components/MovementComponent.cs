@@ -10,6 +10,7 @@ namespace TrafficSimulation
     {
         public float currentSpeed;
         public int maxSpeed;
+        public float3 startPos;
         public float3 endGoal;
     }
     public class MovementComponent : MonoBehaviour, 
@@ -19,7 +20,9 @@ namespace TrafficSimulation
         public int maxSpeed;
         public float3 endGoal;
 
-        public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem system)
+        public void Convert(Entity entity, 
+                            EntityManager dstManager, 
+                            GameObjectConversionSystem system)
         {
             dstManager.AddComponentData(entity, new TrafficSimulation.MovementData
             {
