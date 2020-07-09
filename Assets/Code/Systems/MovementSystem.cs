@@ -19,7 +19,7 @@ namespace TrafficSimulation
             entityCommandBuffer = World.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
         }
 
-        struct MovementJob : IJobForEachWithEntity<MovementData, LocalToWorld> 
+        struct MovementJob : IJobForEachWithEntity<MovementData, LocalToWorld, Rotation> 
         {
             public EntityCommandBuffer.Concurrent commandBuffer;
             public float deltaTime;
@@ -28,17 +28,16 @@ namespace TrafficSimulation
             public void Execute(Entity instance,
                                 int index,
                                 ref MovementData movement,
-                                ref LocalToWorld position)
+                                ref LocalToWorld position,
+                                ref Rotation rotation)
             {
                 float3 posChange = (deltaTime * movement.maxSpeed) * position.Forward;
                 float3 newPosition = math.transform(position.Value, posChange);
 
-                Quaternion rotation = new Quaternion().normalized;
-
                 commandBuffer.SetComponent(index, instance, new LocalToWorld()
                 {
                     Value = Matrix4x4.TRS(newPosition,
-                                            rotation,
+                                            rotation.Value,
                                             Vector3.one)
                 });
                 commandBuffer.SetComponent(index, instance, new Translation 
