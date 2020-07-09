@@ -43,24 +43,26 @@ namespace TrafficSimulation
 
                     float3 position = math.transform(localToWorld.Value, newPos);
 
-                    Quaternion rotation = new Quaternion();
-                    rotation.eulerAngles = new Vector3(random.NextFloat(0f, 360f),
-                                                        0f, 0f);
+                    float3 eulerAngles = new float3(0f,
+                                                    random.NextFloat(0f, 360f),
+                                                    0f);
+
+                    quaternion quaternion = quaternion.EulerXYZ(eulerAngles);
 
                     //Physical Space Location
                     commandBuffer.SetComponent(index, instance, new Translation { Value = position });
-                    
+                    commandBuffer.SetComponent(index, instance, new Rotation { Value = quaternion });
+
                     //Render Location
                     commandBuffer.SetComponent(index, instance, new LocalToWorld()
                     {
                         Value = Matrix4x4.TRS(position,
-                                            rotation,
-                                            Vector3.one)
+                                              quaternion,
+                                              Vector3.one)
                     });
 
                     float3 newEndGoal = random.NextFloat3(new float3(-100), new float3(100));
                     newEndGoal.y = 0.0f;
-
 
                     commandBuffer.SetComponent(index, instance, new TrafficSimulation.MovementData()
                     {
