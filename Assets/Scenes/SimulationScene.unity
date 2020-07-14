@@ -305,8 +305,8 @@ GameObject:
   - component: {fileID: 556427331}
   - component: {fileID: 556427330}
   - component: {fileID: 556427329}
-  - component: {fileID: 556427328}
   - component: {fileID: 556427332}
+  - component: {fileID: 556427328}
   m_Layer: 0
   m_Name: Road
   m_TagString: Road
@@ -400,7 +400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speedLimit: 30
-  lanes: 1
+  lanes: 2
   isOneWay: 0
 --- !u!1 &669331641
 GameObject:
@@ -532,8 +532,8 @@ GameObject:
   - component: {fileID: 1435475279}
   - component: {fileID: 1435475278}
   - component: {fileID: 1435475277}
-  - component: {fileID: 1435475276}
   - component: {fileID: 1435475275}
+  - component: {fileID: 1435475276}
   m_Layer: 0
   m_Name: Road
   m_TagString: Road
@@ -554,7 +554,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speedLimit: 30
-  lanes: 1
+  lanes: 2
   isOneWay: 0
 --- !u!114 &1435475276
 MonoBehaviour:

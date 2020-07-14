@@ -12,6 +12,7 @@ namespace TrafficSimulation
         public int amount;
         public Entity prefab;
     }
+
     [RequiresEntityConversion]
     public class VehicleEntityConversion : MonoBehaviour, 
                                            IDeclareReferencedPrefabs, 

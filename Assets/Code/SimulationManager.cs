@@ -60,17 +60,6 @@ namespace TrafficSimulation
                                               quaternion,
                                               Vector3.one)
                     });
-
-                    float3 newEndGoal = random.NextFloat3(new float3(-100), new float3(100));
-                    newEndGoal.y = 0.0f;
-
-                    commandBuffer.SetComponent(index, instance, new TrafficSimulation.MovementData()
-                    {
-                        currentSpeed = 0.0f,
-                        maxSpeed = 20,
-                        startPos = position,
-                        endGoal = newEndGoal
-                    });
                 }
                 commandBuffer.DestroyEntity(index, entity);
             }

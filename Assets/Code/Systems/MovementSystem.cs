@@ -31,14 +31,18 @@ namespace TrafficSimulation
                                 ref LocalToWorld position,
                                 ref Rotation rotation)
             {
-                float3 posChange = (deltaTime * movement.maxSpeed) * position.Forward;
+                float3 posChange = (deltaTime * movement.currentSpeed) * position.Forward;
                 float3 newPosition = math.transform(position.Value, posChange);
 
+                if (movement.currentSpeed < movement.maxSpeed)
+                {
+                    movement.currentSpeed += ((movement.maxSpeed * deltaTime) / movement.accelerationTime);
+                }
                 commandBuffer.SetComponent(index, instance, new LocalToWorld()
                 {
                     Value = Matrix4x4.TRS(newPosition,
-                                            rotation.Value,
-                                            Vector3.one)
+                                          rotation.Value,
+                                          Vector3.one)
                 });
                 commandBuffer.SetComponent(index, instance, new Translation 
                 { 
