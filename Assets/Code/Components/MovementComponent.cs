@@ -1,7 +1,10 @@
 ﻿using System;
 using UnityEngine;
+
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 
 namespace TrafficSimulation
 {
@@ -19,12 +22,13 @@ namespace TrafficSimulation
         public float3 waypointLocation; //Next point of travel
 
         public TransportType transportType;
+
+        public float3 direction;
     }
 
     public class MovementComponent : MonoBehaviour, 
                                      IConvertGameObjectToEntity
     {
-        public float currentSpeed;
         public int maxSpeed;
 
         public TransportType transportType;
@@ -35,24 +39,33 @@ namespace TrafficSimulation
         {
             Unity.Mathematics.Random random = new Unity.Mathematics.Random(2);
 
+            EntityQuery roads = dstManager.CreateEntityQuery(typeof(Translation),
+                                                             typeof(RoadComponentData));
+
+            NativeArray<Translation> translations = roads.ToComponentDataArray<Translation>(Allocator.TempJob);
+
+            int randomNum = random.NextInt(0, translations.Length);
+
             //Adds Car Data
             dstManager.AddComponentData(entity, new TrafficSimulation.MovementData
             {
-                currentSpeed = currentSpeed,
+                currentSpeed = 0.0f,
                 maxSpeed = maxSpeed,
-                startPos = this.GetComponent<Transform>().position,
-                endGoal = new float3(random.NextFloat(-100f, 100f), 
-                                     0, random.NextFloat(-100f, 100f)),
+                endGoal = translations[randomNum].Value,
                 transportType = transportType,
-                accelerationTime = 6.0f,
+                accelerationTime = 6.0f
             });
 
             if (transportType != TransportType.PERSON)
             {
                 //We need to initialise it, but not set the data just yet
                 dstManager.AddComponentData(entity, new TrafficSimulation.VehicleData
-                {});
+                {
+                    currentDirection = 1
+                });
             }
+
+            translations.Dispose();
         }
     }
 

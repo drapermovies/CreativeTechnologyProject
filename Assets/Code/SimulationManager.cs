@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
+
 using Unity.Jobs;
 using Unity.Entities;
 using Unity.Collections;
@@ -13,14 +16,27 @@ namespace TrafficSimulation
     {
         BeginInitializationEntityCommandBufferSystem entityCommandBuffer;
 
+        EntityQuery transformsQuery;
+
         protected override void OnCreate()
         {
             entityCommandBuffer = World.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
+
+            transformsQuery = EntityManager.CreateEntityQuery(typeof(RoadComponentData),
+                                                              typeof(Translation));
         }
 
         struct SpawnJob : IJobForEachWithEntity<VEntityConversion, LocalToWorld>
         {
             public EntityCommandBuffer.Concurrent commandBuffer;
+
+            [ReadOnly]
+            [DeallocateOnJobCompletion]
+            public NativeArray<Translation> roadPositions;
+
+            [ReadOnly]
+            [DeallocateOnJobCompletion]
+            public NativeArray<RoadComponentData> roads;
 
             [BurstCompile]
             public void Execute(Entity entity, 
@@ -36,28 +52,37 @@ namespace TrafficSimulation
                 Unity.Mathematics.Random random = new Unity.Mathematics.Random(1);
                 for (int i = 0; i < spawnAmount; i++)
                 {
-                    Entity instance = entities[i] = commandBuffer.Instantiate(index, vehicle.prefab);
+                    Entity instance = entities[i] = commandBuffer.Instantiate(index, 
+                                                                              vehicle.prefab);
 
-                    float3 newPos = new float3(random.NextFloat(-100f, 100f), 0,
-                                                 random.NextFloat(-100f, 100f));
+                    int selectionID = random.NextInt(0, roadPositions.Length);
+                    float3 newPos = roadPositions[selectionID].Value;
+
+                    newPos.y = 0.5f;
 
                     float3 position = math.transform(localToWorld.Value, newPos);
 
-                    float3 eulerAngles = new float3(0f,
-                                                    random.NextFloat(0f, 360f),
-                                                    0f);
-
-                    quaternion quaternion = quaternion.EulerXYZ(eulerAngles);
-
                     //Physical Space Location
-                    commandBuffer.SetComponent(index, instance, new Translation { Value = position });
-                    commandBuffer.SetComponent(index, instance, new Rotation { Value = quaternion });
+                    commandBuffer.SetComponent(index, instance, new Translation 
+                    { 
+                        Value = position 
+                    });
+
+                    float carRotation = 90f * Mathf.Deg2Rad;
+
+                    quaternion rotationValue = math.normalize(quaternion.Euler(new float3(0, carRotation, 0)));
+
+                    //Rotation
+                    commandBuffer.SetComponent(index, instance, new Rotation
+                    {
+                        Value = rotationValue
+                    });
 
                     //Render Location
                     commandBuffer.SetComponent(index, instance, new LocalToWorld()
                     {
                         Value = Matrix4x4.TRS(position,
-                                              quaternion,
+                                              rotationValue,
                                               Vector3.one)
                     });
                 }
@@ -69,8 +94,12 @@ namespace TrafficSimulation
         {
             JobHandle job = new SpawnJob
             {
-                commandBuffer = entityCommandBuffer.CreateCommandBuffer().ToConcurrent()
-            }.Schedule(this, inputDeps);
+                commandBuffer = entityCommandBuffer.CreateCommandBuffer().ToConcurrent(),
+                roadPositions = transformsQuery
+                                .ToComponentDataArray<Translation>(Allocator.TempJob),
+                roads = transformsQuery.ToComponentDataArray<RoadComponentData>(Allocator.TempJob)
+
+        }.Schedule(this, inputDeps);
 
             entityCommandBuffer.AddJobHandleForProducer(job);
 

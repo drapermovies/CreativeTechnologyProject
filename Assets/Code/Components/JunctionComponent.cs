@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+
 using UnityEngine;
 using Unity.Collections;
 using Unity.Entities;
@@ -12,7 +14,7 @@ namespace TrafficSimulation
     {
         public float currentLightsTime;
         public float maxLightsCountdown;
-        public DynamicBuffer<RoadBufferElement> roadConnections;
+        public DynamicBuffer<IntBufferElement> connectedRoadIDs;
     }
 
     public class JunctionComponent : MonoBehaviour,
@@ -24,19 +26,41 @@ namespace TrafficSimulation
                             EntityManager dstManager, 
                             GameObjectConversionSystem system)
         {
-            //Convert road objects to ECS Compatible data
-            DynamicBuffer<RoadBufferElement> roadBuffer = dstManager.AddBuffer<RoadBufferElement>(entity);
+            Vector3 position = GetComponent<Transform>().position;
+            float3 quartenionPosition = new float3(0.01f);
+            if(position.x != 0)
+            {
+                quartenionPosition.x = position.x;
+            }
+            if(position.y != 0)
+            {
+                quartenionPosition.y = position.y;
+            }
+            if(position.z != 0)
+            {
+                quartenionPosition.z = position.z;
+            }
 
             dstManager.SetComponentData(entity, new Translation
             {
-                Value = GetComponent<Transform>().position
+                Value = quartenionPosition
             });
+
+            DynamicBuffer<IntBufferElement> connectedRoadID = dstManager.AddBuffer<IntBufferElement>(entity);
+
+            for (int i = 0; i < connections.Length; i++)
+            {
+                connectedRoadID.Add(new IntBufferElement 
+                { 
+                    Value = connections[i].GetInstanceID() 
+                });
+            }
 
             dstManager.AddComponentData(entity, new TrafficSimulation.JunctionData
             {
                 maxLightsCountdown = 3.0f,
                 currentLightsTime = 0.0f,
-                //roadConnections = roadBuffer
+                connectedRoadIDs = connectedRoadID
             });
         }
     }

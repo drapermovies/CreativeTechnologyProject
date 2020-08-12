@@ -8,22 +8,18 @@ using Unity.Transforms;
 namespace TrafficSimulation
 {
     [Serializable]
-    public struct RoadBufferElement : IBufferElementData
-    {
-        public int ID;
-        public Entity entity;
-    }
-
-    [Serializable]
     public struct RoadComponentData : IComponentData
     {
         public int ID;
+
         public int speedLimit;
         public int lanes;
-        public bool isOneWay;
-        public int trafficAmount;
 
-        public RoadBufferElement bufferElement;
+        public float3 travelDirection; //Road direction in degrees
+
+        public bool isOneWay;
+
+        public int trafficAmount;
 
         public bool isActive;
     }
@@ -32,8 +28,10 @@ namespace TrafficSimulation
                               IConvertGameObjectToEntity
     {
         public int id { get; private set; }
+
         public int speedLimit = 30;
         public int lanes = 1;
+
         public bool isOneWay;
         
         public void Convert(Entity entity,
@@ -55,12 +53,12 @@ namespace TrafficSimulation
 
             dstManager.AddComponentData(entity, new RoadComponentData()
             {
-                ID = this.GetInstanceID(),
+                ID = this.transform.GetInstanceID(),
                 speedLimit = speedLimit,
                 lanes = lanes,
                 isOneWay = isOneWay,
                 trafficAmount = 0,
-                bufferElement = new RoadBufferElement(),
+                travelDirection = this.GetComponent<Transform>().rotation.eulerAngles,
                 isActive = false
             });
         }
